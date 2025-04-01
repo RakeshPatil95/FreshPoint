@@ -15,10 +15,89 @@ This document outlines the API endpoints for both **User** and **Admin** functio
 - **Backend:** Spring Boot
 - **Database:** MongoDB
 
+**2. Database Schema Design:**
+
+Using MongoDB, a NoSQL database, allows for flexible and scalable data modeling. Below are the primary collections and their sample structures:
+
+- **Users Collection:**
+  ```json
+  {
+    "_id": ObjectId,
+    "mobile_number": String,
+    "name": String,
+    "addresses": [
+      {
+        "address_id": ObjectId,
+        "street": String,
+        "city": String,
+        "state": String,
+        "zip_code": String
+      }
+    ],
+    "cart": [
+      {
+        "item_id": ObjectId,
+        "quantity": Number
+      }
+    ],
+    "orders": [ObjectId] // References to Orders
+  }
+  ```
+  --- mobileNo should be unique. If mobno present use same details.
+
+
+- **Items Collection:**
+  ```json
+  {
+    "_id": ObjectId,
+    "name": String,
+    "description": String,
+    "price": Number,
+    "category": [ObjectId], // References to Category
+    "stock_quantity": Number,
+    "image_url": String
+  }
+  ```
+
+  - **Category Collection:**
+  ```json
+  {
+    "_id": ObjectId,
+    "name": String,
+    "image_url": String
+  }
+  ```
+
+
+- **Orders Collection:**
+  ```json
+  {
+    "_id": ObjectId,
+    "user_id": ObjectId,
+    "items": [
+      {
+        "item_id": ObjectId,
+        "quantity": Number,
+        "price": Number
+      }
+    ],
+    "total_amount": Number,
+    "delivery_address": {
+      "street": String,
+      "city": String,
+      "state": String,
+      "zip_code": String
+    },
+    "payment_method": String, // e.g., "Online", "COD"
+    "status": String, // e.g., "Placed", "Delivered"
+    "order_date": Date
+  }
+  ```
+
 ## Base URL
 
 All endpoints are prefixed with:  
-`https://api.yourdomain.com`
+`https://localhost:<port>.com`
 
 ---
 
@@ -55,21 +134,41 @@ All endpoints are prefixed with:
 - **Response:**
   ```json
   {
-    "token": "jwt_token",
-    "user": {
-      "id": "string",
-      "name": "string",
-      "mobile_number": "string"
+  "token": "jwt_token",
+  "user": {
+    "id": "string",
+    "name": "string",
+    "mobile_number": "string",
+    "is_admin": true  // true if mobile number is in the admin list, false otherwise
     }
   }
   ```
+Note: The is_admin flag is determined by checking if the mobile number is in the admin list.
 
+---
+
+### 2. Categories
+
+#### a. Get All Items
+- **URL:** `/api/categories`
+- **Method:** `GET`
+- **Response:**
+  ```json
+  [
+    {
+    "_id": ObjectId,
+    "name": String,
+    "image_url": String
+    }
+  ]
+  ```
+Note: This should return MAP of all categories of items added by ADMIN with image of Category. 
 ---
 
 ### 2. Items
 
 #### a. Get All Items
-- **URL:** `/api/items`
+- **URL:** `/api/category/{_id}/items`
 - **Method:** `GET`
 - **Response:**
   ```json
@@ -106,6 +205,7 @@ All endpoints are prefixed with:
     "message": "Item added to cart"
   }
   ```
+Note: add this in user table cart
 
 #### b. Get Cart Contents
 - **URL:** `/api/cart`
@@ -240,6 +340,12 @@ All endpoints are prefixed with:
           "price": number
         }
       ],
+      "delivery_address": {
+      "street": String,
+      "city": String,
+      "state": String,
+      "zip_code": String
+    },
       "total_amount": number,
       "status": "Placed" | "Delivered",
       "order_date": "date"
@@ -290,71 +396,4 @@ This API specification should serve as a blueprint for your team to begin develo
 
 Developing a grocery delivery application involves careful planning of its architecture, database schema, API specifications, and implementation steps. Below is a comprehensive guide tailored to your requirements.
 
-**2. Database Schema Design:**
-
-Using MongoDB, a NoSQL database, allows for flexible and scalable data modeling. Below are the primary collections and their sample structures:
-
-- **Users Collection:**
-  ```json
-  {
-    "_id": ObjectId,
-    "mobile_number": String,
-    "name": String,
-    "addresses": [
-      {
-        "address_id": ObjectId,
-        "street": String,
-        "city": String,
-        "state": String,
-        "zip_code": String
-      }
-    ],
-    "cart": [
-      {
-        "item_id": ObjectId,
-        "quantity": Number
-      }
-    ],
-    "orders": [ObjectId] // References to Orders
-  }
-  ```
-
-
-- **Items Collection:**
-  ```json
-  {
-    "_id": ObjectId,
-    "name": String,
-    "description": String,
-    "price": Number,
-    "category": String,
-    "stock_quantity": Number,
-    "image_url": String
-  }
-  ```
-
-
-- **Orders Collection:**
-  ```json
-  {
-    "_id": ObjectId,
-    "user_id": ObjectId,
-    "items": [
-      {
-        "item_id": ObjectId,
-        "quantity": Number,
-        "price": Number
-      }
-    ],
-    "total_amount": Number,
-    "delivery_address": {
-      "street": String,
-      "city": String,
-      "state": String,
-      "zip_code": String
-    },
-    "payment_method": String, // e.g., "Online", "COD"
-    "status": String, // e.g., "Placed", "Delivered"
-    "order_date": Date
-  }
-  ```
+---
