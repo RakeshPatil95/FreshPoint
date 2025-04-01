@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
+import { toast } from "react-hot-toast";
+import React from "react";
 export default function LandingPage() {
   const router = useRouter();
 
@@ -37,7 +38,7 @@ export default function LandingPage() {
         </Button>
         <Button 
           className="w-full text-lg p-4 bg-white text-green-600 border border-green-600 hover:bg-green-100"
-          onClick={() => alert("Browse as Guest Coming Soon!")}
+          onClick={() => toast.success("Browse as Guest Coming Soon!")}
         >
           Browse as Guest
         </Button>

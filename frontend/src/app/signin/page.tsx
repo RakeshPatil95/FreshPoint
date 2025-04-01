@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { toast } from "react-hot-toast";
 
 export default function SignIn() {
   const [phone, setPhone] = useState("");
@@ -14,19 +15,19 @@ export default function SignIn() {
 
   const sendOtp = () => {
     if (phone.length === 10) {
-      alert("OTP sent to " + phone);
+      toast.success(`OTP sent to ${phone}`, { position: "top-center" });
       setStep(2);
     } else {
-      alert("Enter a valid 10-digit phone number");
+      toast.error("Enter a valid 10-digit phone number", { position: "top-center" });
     }
   };
 
   const verifyOtp = () => {
     if (otp === "123456") { // Mock OTP for now
-      alert("OTP Verified!");
+      toast.success("OTP Verified!", { position: "top-center" });
       router.push("/home"); // Redirect to Home
     } else {
-      alert("Invalid OTP, try again!");
+      toast.error("Invalid OTP, try again!", { position: "top-center" });
     }
   };
 

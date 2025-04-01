@@ -51,9 +51,9 @@ export default function Header() {
                 Cart
               </Link>
               <Button
+                onClick={() => router.push("/")}
                 variant="default" // Changed to "default" for better visibility
                 className="bg-white text-green-600 hover:bg-green-100" // Modified colors
-                onClick={() => setOpen(false)}
               >
                 Logout
               </Button>
